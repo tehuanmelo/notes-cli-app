@@ -6,44 +6,38 @@ from database import setup_db, create_note, get_all_notes
 class NotesApp(App):
     
     CSS_PATH = "notes.css"
+    BINDINGS = [("ctrl+s", "save_note", "Save the current note")]
 
     def on_mount(self):
         setup_db()
         self.update_sidebar()
-    
+
+
     def compose(self):
         yield Header()
         with Horizontal():
-            with Vertical(id="sidebar"):
-                yield Button("New Note", id="new-note-btn")
-                with VerticalScroll(id="notes-list"):
-                    pass
+            with VerticalScroll(id="sidebar"):
+                pass
             with Vertical(id="main-app"):
                 yield Input(placeholder="Enter the note title here...", id="note-title")
                 yield TextArea(id="text-area")
         yield Footer()
-        
-    def on_button_pressed(self, event):
-        notes_list = self.query_one("#notes-list")
-        content_box = self.query_one("#text-area")
-        title_input = self.query_one("#note-title")
-        
-        note_content = content_box.text
-        note_title = title_input.value
-        
-        create_note(note_title, note_content)
-        
-        notes_list.mount(Label(note_title))
-        content_box.text = ""
-        title_input.value = ""
-        
-        notes_list.mount(Label("Note saved"))
+ 
     
     def update_sidebar(self):
-        notes_list = self.query_one("#notes-list")
-        notes_list.query(Label).remove()
+        sidebar = self.query_one("#sidebar")
+        sidebar.query(Label).remove()
         for note in get_all_notes():
-            notes_list.mount(Label(note.title))
+            sidebar.mount(Label(note.title))
+
+       
+    def action_save_note(self):
+        title_input = self.query_one("#note-title")
+        content_input = self.query_one("#text-area")
+        create_note(title_input.value, content_input.text)
+        self.update_sidebar()
+        title_input.value = ""
+        content_input.text = ""
         
         
         
