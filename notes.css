@@ -1,0 +1,10 @@
+#sidebar {
+    width: 30%;
+        #new-note-btn {
+            width: 100%;
+        }
+}
+
+#text-area {
+    width: 70%;
+}
