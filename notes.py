@@ -1,6 +1,6 @@
 from textual.app import App, ComposeResult
 from textual.widgets import Header, Footer, Label, Button, TextArea, Input
-from textual.containers import Horizontal, Vertical
+from textual.containers import Horizontal, Vertical, VerticalScroll
 from database import setup_db, create_note, get_all_notes
 
 class NotesApp(App):
@@ -9,19 +9,22 @@ class NotesApp(App):
 
     def on_mount(self):
         setup_db()
+        self.update_sidebar()
     
     def compose(self):
         yield Header()
         with Horizontal():
             with Vertical(id="sidebar"):
                 yield Button("New Note", id="new-note-btn")
+                with VerticalScroll(id="notes-list"):
+                    pass
             with Vertical(id="main-app"):
                 yield Input(placeholder="Enter the note title here...", id="note-title")
                 yield TextArea(id="text-area")
         yield Footer()
         
     def on_button_pressed(self, event):
-        sidebar = self.query_one("#sidebar")
+        notes_list = self.query_one("#notes-list")
         content_box = self.query_one("#text-area")
         title_input = self.query_one("#note-title")
         
@@ -30,11 +33,18 @@ class NotesApp(App):
         
         create_note(note_title, note_content)
         
-        sidebar.mount(Label(note_title))
+        notes_list.mount(Label(note_title))
         content_box.text = ""
         title_input.value = ""
         
-        sidebar.mount(Label("Note saved"))
+        notes_list.mount(Label("Note saved"))
+    
+    def update_sidebar(self):
+        notes_list = self.query_one("#notes-list")
+        notes_list.query(Label).remove()
+        for note in get_all_notes():
+            notes_list.mount(Label(note.title))
+        
         
         
 if __name__ == "__main__":
