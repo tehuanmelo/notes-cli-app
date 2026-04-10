@@ -11,11 +11,13 @@ def setup_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT
         )""")
         
-def create_note(title: str, content: str) -> None:
+def create_note(title: str, content: str) -> Note:
     conn = sqlite3.connect("notes.db")
     c = conn.cursor()
     with conn:
         c.execute("INSERT INTO notes (title, content) VALUES (?, ?)", (title, content))
+        note_id = c.lastrowid
+    return Note(title, content, note_id)
 
 def get_all_notes():
     conn = sqlite3.connect("notes.db")
@@ -24,3 +26,9 @@ def get_all_notes():
         c.execute("SELECT * FROM notes")
         notes = c.fetchall()
         return [Note(*note) for note in notes] if notes else []
+
+def delete_note(note_id: int):
+    conn = sqlite3.connect("notes.db")
+    c = conn.cursor()
+    with conn:
+        c.execute("DELETE FROM notes WHERE id = ?", (note_id, ))
