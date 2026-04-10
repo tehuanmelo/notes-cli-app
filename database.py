@@ -15,4 +15,10 @@ def create_note(title: str, content: str) -> None:
     c = conn.cursor()
     with conn:
         c.execute("INSERT INTO notes (title, content) VALUES (?, ?)", (title, content))
-        
+
+def get_all_notes():
+    conn = sqlite3.connect("notes.db")
+    c = conn.cursor()
+    with conn:
+        c.execute("SELECT * FROM notes")
+        return c.fetchall()

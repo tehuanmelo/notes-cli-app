@@ -1,7 +1,7 @@
 from textual.app import App, ComposeResult
 from textual.widgets import Header, Footer, Label, Button, TextArea, Input
 from textual.containers import Horizontal, Vertical
-from database import setup_db, create_note
+from database import setup_db, create_note, get_all_notes
 
 class NotesApp(App):
     
