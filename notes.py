@@ -29,6 +29,7 @@ class NotesApp(App):
         self.note_title_input = self.query_one("#note-title").focus()
         self.note_content_area = self.query_one("#text-area")
         self.notes_list = self.query_one("#notes-list")
+        self.search_input = self.query_one("#search")
 
         self.update_notes_list()
 
@@ -50,14 +51,12 @@ class NotesApp(App):
         self.notes_list.append(item)
     
     def update_notes_list(self):
-        self.notes_list
         self.notes_list.clear()
         selected_note = None
         for idx, note in enumerate(get_all_notes()):
-            self.append_item_to_notes_list(note)
-            if self.current_note and self.current_note.note_id == note.note_id:
-                selected_note = idx
-                
+                self.append_item_to_notes_list(note)
+                if self.current_note and self.current_note.note_id == note.note_id:
+                    selected_note = idx
         if selected_note is not None:
             self.set_timer(0.01, lambda idx=selected_note: self._select_note(idx))
 
@@ -68,7 +67,8 @@ class NotesApp(App):
         self.note_content_area
         self.note_title_input.value = ""
         self.note_content_area.text = ""
-        
+
+ 
     def action_delete_note(self):
         # delete the current note from the database if is not None
         if self.current_note is not None:
@@ -78,11 +78,9 @@ class NotesApp(App):
         # update the notes_list
         self.update_notes_list()
         self.action_new_note()
-        
+
 
     def action_save_note(self):
-        self.note_title_input
-        self.note_content_area
         if not self.note_title_input.value:
             return
         if self.current_note is None:
@@ -90,13 +88,12 @@ class NotesApp(App):
             self.current_note = note
         else:
             update_note(self.note_title_input.value, self.note_content_area.text, self.current_note.note_id)
+        self.search_input.value = ""
         self.update_notes_list()
 
 
     def on_list_view_selected(self, event: ListView.Selected):
         self.current_note = event.item.note
-        self.note_title_input
-        self.note_content_area
         self.note_title_input.value = self.current_note.title
         self.note_content_area.text = self.current_note.content
 
@@ -105,12 +102,21 @@ class NotesApp(App):
         if event.item is None:
             return
         self.current_note = event.item.note
-        self.note_title_input
-        self.note_content_area
         self.note_title_input.value = self.current_note.title
         self.note_content_area.text = self.current_note.content
-        
-        
+
+
+    def on_input_changed(self, event: Input.Changed):
+        if event.input.id == self.search_input.id:
+            self.notes_list.clear()
+            for note in get_all_notes():
+                if self.search_input.value:
+                    if self.search_input.value.lower() in note.title.lower():
+                        self.append_item_to_notes_list(note)
+                else:
+                    self.append_item_to_notes_list(note)
+
+
 if __name__ == "__main__":
     app = NotesApp()
     app.run()
