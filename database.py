@@ -32,3 +32,11 @@ def delete_note(note_id: int):
     c = conn.cursor()
     with conn:
         c.execute("DELETE FROM notes WHERE id = ?", (note_id, ))
+        
+def update_note(title, content, note_id):
+    if not title: return
+    conn = sqlite3.connect("notes.db")
+    c = conn.cursor()
+    with conn:
+        c.execute("UPDATE notes SET title=?, content=? WHERE id=?", (title, content, note_id))
+        

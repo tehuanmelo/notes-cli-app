@@ -1,7 +1,7 @@
 from textual.app import App
 from textual.widgets import Label, TextArea, Input, ListView, ListItem, Static
 from textual.containers import Horizontal, Vertical
-from database import setup_db, create_note, get_all_notes, delete_note
+from database import setup_db, create_note, get_all_notes, delete_note, update_note
 from model import Note
 from textual.binding import Binding
 
@@ -17,43 +17,44 @@ class NotesApp(App):
         Binding("ctrl+n", "new_note", "Create new note", priority=True),
         Binding("ctrl+d", "delete_note", "Delete current note", priority=True),
         Binding("ctrl+q", "do_nothing", "Disabled", priority=True),
-        Binding("ctrl+x", "quit", "Quit", priority=True),
+        Binding("ctrl+e", "quit", "Quit", priority=True),
     ]
     
     def _select_note(self, index: int) -> None:
-        self.sidebar.index = index
-        self.sidebar.focus()
+        self.notes_list.index = index
+        self.notes_list.focus()
 
     def on_mount(self):
         setup_db()
         self.note_title_input = self.query_one("#note-title").focus()
         self.note_content_area = self.query_one("#text-area")
-        self.sidebar = self.query_one("#sidebar")
+        self.notes_list = self.query_one("#notes-list")
 
-        self.update_sidebar()
+        self.update_notes_list()
 
     def compose(self):
         yield Static("Notes App", id="header")
         with Horizontal():
-            with ListView(id="sidebar"):
-                pass
+            with Vertical(id="sidebar"):
+                yield Input(placeholder="Search...", id="search")
+                yield ListView(id="notes-list")
             with Vertical(id="main-app"):
                 yield Input(placeholder="Enter the note title here...", id="note-title")
                 yield TextArea(id="text-area")
-        yield Static("[orange]^s[/orange] Save the current note   [orange]^c[/orange] Create new note   [orange]^d[/orange] Delete current note   [orange]^x[/orange] Exit the app" , id="keybar")
+        yield Static("[orange]^s[/orange] Save the current note   [orange]^n[/orange] Create new note   [orange]^d[/orange] Delete current note   [orange]^e[/orange] Exit the app" , id="keybar")
  
-    def append_item_to_sidebar(self, note: Note):
-        self.sidebar
+    def append_item_to_notes_list(self, note: Note):
+        self.notes_list
         item = ListItem(Label(note.title))
         item.note = note
-        self.sidebar.append(item)
+        self.notes_list.append(item)
     
-    def update_sidebar(self):
-        self.sidebar
-        self.sidebar.clear()
+    def update_notes_list(self):
+        self.notes_list
+        self.notes_list.clear()
         selected_note = None
         for idx, note in enumerate(get_all_notes()):
-            self.append_item_to_sidebar(note)
+            self.append_item_to_notes_list(note)
             if self.current_note and self.current_note.note_id == note.note_id:
                 selected_note = idx
                 
@@ -74,12 +75,11 @@ class NotesApp(App):
             delete_note(self.current_note.note_id)
             # set the current note to None
             self.current_note = None
-        # update the sidebar
-        self.update_sidebar()
+        # update the notes_list
+        self.update_notes_list()
         self.action_new_note()
         
 
-       
     def action_save_note(self):
         self.note_title_input
         self.note_content_area
@@ -88,11 +88,9 @@ class NotesApp(App):
         if self.current_note is None:
             note = create_note(self.note_title_input.value, self.note_content_area.text)
             self.current_note = note
-            self.update_sidebar()
-            return
         else:
-            pass
-        self.update_sidebar()
+            update_note(self.note_title_input.value, self.note_content_area.text, self.current_note.note_id)
+        self.update_notes_list()
 
 
     def on_list_view_selected(self, event: ListView.Selected):
