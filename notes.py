@@ -43,14 +43,14 @@ class NotesApp(App):
         yield Static("[orange]^s[/orange] Save the current note   [orange]^c[/orange] Create new note   [orange]^d[/orange] Delete current note   [orange]^x[/orange] Exit the app" , id="keybar")
  
     def append_item_to_sidebar(self, note: Note):
-        sidebar = self.query_one("#sidebar")
+        self.sidebar
         item = ListItem(Label(note.title))
         item.note = note
-        sidebar.append(item)
+        self.sidebar.append(item)
     
     def update_sidebar(self):
-        sidebar = self.query_one("#sidebar")
-        sidebar.clear()
+        self.sidebar
+        self.sidebar.clear()
         selected_note = None
         for idx, note in enumerate(get_all_notes()):
             self.append_item_to_sidebar(note)
@@ -63,10 +63,10 @@ class NotesApp(App):
 
     def action_new_note(self):
         self.current_note = None
-        title_input = self.query_one("#note-title").focus()
-        content_input = self.query_one("#text-area")
-        title_input.value = ""
-        content_input.text = ""
+        self.note_title_input.focus()
+        self.note_content_area
+        self.note_title_input.value = ""
+        self.note_content_area.text = ""
         
     def action_delete_note(self):
         # delete the current note from the database if is not None
@@ -81,12 +81,12 @@ class NotesApp(App):
 
        
     def action_save_note(self):
-        title_input = self.query_one("#note-title")
-        content_input = self.query_one("#text-area")
-        if not title_input.value:
+        self.note_title_input
+        self.note_content_area
+        if not self.note_title_input.value:
             return
         if self.current_note is None:
-            note = create_note(title_input.value, content_input.text)
+            note = create_note(self.note_title_input.value, self.note_content_area.text)
             self.current_note = note
             self.update_sidebar()
             return
@@ -97,20 +97,20 @@ class NotesApp(App):
 
     def on_list_view_selected(self, event: ListView.Selected):
         self.current_note = event.item.note
-        title_input = self.query_one("#note-title")
-        content_input = self.query_one("#text-area")
-        title_input.value = self.current_note.title
-        content_input.text = self.current_note.content
+        self.note_title_input
+        self.note_content_area
+        self.note_title_input.value = self.current_note.title
+        self.note_content_area.text = self.current_note.content
 
 
     def on_list_view_highlighted(self, event: ListView.Highlighted):
         if event.item is None:
             return
         self.current_note = event.item.note
-        title_input = self.query_one("#note-title")
-        content_input = self.query_one("#text-area")
-        title_input.value = self.current_note.title
-        content_input.text = self.current_note.content
+        self.note_title_input
+        self.note_content_area
+        self.note_title_input.value = self.current_note.title
+        self.note_content_area.text = self.current_note.content
         
         
 if __name__ == "__main__":
