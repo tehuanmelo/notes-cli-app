@@ -37,11 +37,11 @@ class NotesApp(App):
         yield Static("Notes App", id="header")
         with Horizontal():
             with Vertical(id="sidebar"):
-                yield Input(placeholder="Search...", id="search")
-                yield ListView(id="notes-list")
+                yield Input(placeholder="Search...", id="search", classes="box")
+                yield ListView(id="notes-list", classes="box")
             with Vertical(id="main-app"):
-                yield Input(placeholder="Enter the note title here...", id="note-title")
-                yield TextArea(id="text-area")
+                yield Input(placeholder="Enter the note title...", id="note-title", classes="box")
+                yield TextArea(placeholder="Enter the note content...", id="text-area", classes="box")
         yield Static("[orange]^s[/orange] Save the current note   [orange]^n[/orange] Create new note   [orange]^d[/orange] Delete current note   [orange]^e[/orange] Exit the app" , id="keybar")
  
     def append_item_to_notes_list(self, note: Note):
@@ -78,6 +78,7 @@ class NotesApp(App):
         # update the notes_list
         self.update_notes_list()
         self.action_new_note()
+        self.search_input.focus()
 
 
     def action_save_note(self):
@@ -90,6 +91,7 @@ class NotesApp(App):
             update_note(self.note_title_input.value, self.note_content_area.text, self.current_note.note_id)
         self.search_input.value = ""
         self.update_notes_list()
+        self.notify(f"Note saved")
 
 
     def on_list_view_selected(self, event: ListView.Selected):

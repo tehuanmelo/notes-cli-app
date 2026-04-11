@@ -16,4 +16,11 @@
     text-align: center;
 }
 
+.box {
+    border: round $primary;
+}
 
+.box:focus {
+    border: round $accent;
+    background: $surface;
+}
