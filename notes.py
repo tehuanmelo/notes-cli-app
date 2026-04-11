@@ -1,5 +1,5 @@
 from textual.app import App
-from textual.widgets import Header, Footer, Label, TextArea, Input, ListView, ListItem, Static
+from textual.widgets import Label, TextArea, Input, ListView, ListItem, Static
 from textual.containers import Horizontal, Vertical
 from database import setup_db, create_note, get_all_notes, delete_note
 from model import Note
@@ -16,10 +16,13 @@ class NotesApp(App):
         Binding("ctrl+s", "save_note", "Save the current note", priority=True),
         Binding("ctrl+n", "new_note", "Create new note", priority=True),
         Binding("ctrl+d", "delete_note", "Delete current note", priority=True),
+        Binding("ctrl+q", "do_nothing", "Disabled", priority=True),
+        Binding("ctrl+x", "quit", "Quit", priority=True),
     ]
     
     def _select_note(self, index: int) -> None:
         self.sidebar.index = index
+        self.sidebar.focus()
 
     def on_mount(self):
         setup_db()
@@ -37,7 +40,7 @@ class NotesApp(App):
             with Vertical(id="main-app"):
                 yield Input(placeholder="Enter the note title here...", id="note-title")
                 yield TextArea(id="text-area")
-        yield Static("[orange]^s[/orange] Save the current note   [orange]^c[/orange] Create new note   [orange]^d[/orange] Delete current note", id="keybar")
+        yield Static("[orange]^s[/orange] Save the current note   [orange]^c[/orange] Create new note   [orange]^d[/orange] Delete current note   [orange]^x[/orange] Exit the app" , id="keybar")
  
     def append_item_to_sidebar(self, note: Note):
         sidebar = self.query_one("#sidebar")
@@ -56,7 +59,6 @@ class NotesApp(App):
                 
         if selected_note is not None:
             self.set_timer(0.01, lambda idx=selected_note: self._select_note(idx))
-            sidebar.focus()
 
 
     def action_new_note(self):

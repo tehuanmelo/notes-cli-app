@@ -10,10 +10,9 @@
 }
 
 #keybar, #header {
-    height: 1;
     background: $panel;
     color: $text;
-    padding: 0 1;
+    padding: 0 3;
 }
 
 #header {
