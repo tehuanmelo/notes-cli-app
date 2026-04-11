@@ -8,18 +8,24 @@ class NotesApp(App):
     def __init__(self):
         super().__init__()
         self.current_note = None
+        
     
     CSS_PATH = "notes.css"
     BINDINGS = [
         ("ctrl+s", "save_note", "Save the current note"),
         ("ctrl+n", "new_note", "Create new note"),
     ]
+    
+    def _select_note(self, index: int) -> None:
+        self.sidebar.index = index
 
     def on_mount(self):
         setup_db()
-        self.update_sidebar()
-        self.query_one("#note-title").focus()
+        self.note_title_input = self.query_one("#note-title").focus()
+        self.note_content_area = self.query_one("#text-area")
+        self.sidebar = self.query_one("#sidebar")
 
+        self.update_sidebar()
 
     def compose(self):
         yield Header()
@@ -40,8 +46,15 @@ class NotesApp(App):
     def update_sidebar(self):
         sidebar = self.query_one("#sidebar")
         sidebar.clear()
-        for note in get_all_notes():
+        selected_note = None
+        for idx, note in enumerate(get_all_notes()):
             self.append_item_to_sidebar(note)
+            if self.current_note and self.current_note.note_id == note.note_id:
+                selected_note = idx
+                
+        if selected_note is not None:
+            self.set_timer(0.01, lambda idx=selected_note: self._select_note(idx))
+            sidebar.focus()
 
 
     def action_new_note(self):
@@ -55,15 +68,12 @@ class NotesApp(App):
     def action_save_note(self):
         title_input = self.query_one("#note-title")
         content_input = self.query_one("#text-area")
-        sidebar = self.query_one("#sidebar")
         if not title_input.value:
             return
         if self.current_note is None:
             note = create_note(title_input.value, content_input.text)
             self.current_note = note
-            self.append_item_to_sidebar(note)
-            sidebar.index = len(sidebar.children) - 1
-            sidebar.focus()
+            self.update_sidebar()
             return
         else:
             pass
@@ -71,7 +81,6 @@ class NotesApp(App):
 
 
     def on_list_view_selected(self, event: ListView.Selected):
-        sidebar = self.query_one("#sidebar")
         self.current_note = event.item.note
         title_input = self.query_one("#note-title")
         content_input = self.query_one("#text-area")
