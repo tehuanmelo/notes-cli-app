@@ -1,8 +1,9 @@
 from textual.app import App
-from textual.widgets import Header, Footer, Label, TextArea, Input, ListView, ListItem
-from textual.containers import Horizontal, Vertical, VerticalScroll
+from textual.widgets import Header, Footer, Label, TextArea, Input, ListView, ListItem, Static
+from textual.containers import Horizontal, Vertical
 from database import setup_db, create_note, get_all_notes, delete_note
 from model import Note
+from textual.binding import Binding
 
 class NotesApp(App):
     def __init__(self):
@@ -12,8 +13,9 @@ class NotesApp(App):
     
     CSS_PATH = "notes.css"
     BINDINGS = [
-        ("ctrl+s", "save_note", "Save the current note"),
-        ("ctrl+n", "new_note", "Create new note"),
+        Binding("ctrl+s", "save_note", "Save the current note", priority=True),
+        Binding("ctrl+n", "new_note", "Create new note", priority=True),
+        Binding("ctrl+d", "delete_note", "Delete current note", priority=True),
     ]
     
     def _select_note(self, index: int) -> None:
@@ -28,14 +30,14 @@ class NotesApp(App):
         self.update_sidebar()
 
     def compose(self):
-        yield Header()
+        yield Static("Notes App", id="header")
         with Horizontal():
             with ListView(id="sidebar"):
                 pass
             with Vertical(id="main-app"):
                 yield Input(placeholder="Enter the note title here...", id="note-title")
                 yield TextArea(id="text-area")
-        yield Footer()
+        yield Static("[orange]^s[/orange] Save the current note   [orange]^c[/orange] Create new note   [orange]^d[/orange] Delete current note", id="keybar")
  
     def append_item_to_sidebar(self, note: Note):
         sidebar = self.query_one("#sidebar")
@@ -63,6 +65,17 @@ class NotesApp(App):
         content_input = self.query_one("#text-area")
         title_input.value = ""
         content_input.text = ""
+        
+    def action_delete_note(self):
+        # delete the current note from the database if is not None
+        if self.current_note is not None:
+            delete_note(self.current_note.note_id)
+            # set the current note to None
+            self.current_note = None
+        # update the sidebar
+        self.update_sidebar()
+        self.action_new_note()
+        
 
        
     def action_save_note(self):
