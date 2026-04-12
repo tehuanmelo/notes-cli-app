@@ -4,6 +4,7 @@ from textual.containers import Horizontal, Vertical
 from database import setup_db, create_note, get_all_notes, delete_note, update_note
 from model import Note
 from textual.binding import Binding
+from datetime import datetime
 
 class NotesApp(App):
     def __init__(self):
@@ -45,8 +46,14 @@ class NotesApp(App):
         yield Static("[orange]^s[/orange] Save the current note   [orange]^n[/orange] Create new note   [orange]^d[/orange] Delete current note   [orange]^e[/orange] Exit the app" , id="keybar")
  
     def append_item_to_notes_list(self, note: Note):
-        self.notes_list
-        item = ListItem(Label(note.title))
+        note_date = datetime.fromisoformat(note.updated_at).strftime("%d %B, %Y")
+        item = ListItem(
+            Horizontal(
+                Label(note.title, expand=True, classes="note-title"),
+                Label(note_date, classes="note-date"),
+                classes="list-item"
+            )
+        )
         item.note = note
         self.notes_list.append(item)
     
