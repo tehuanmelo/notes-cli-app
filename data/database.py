@@ -1,7 +1,9 @@
 import sqlite3
-from model import Note
-from config import DB
+from models.model import Note
 from datetime import datetime
+from pathlib import Path
+
+DB = Path(__file__).resolve().parent / 'notes.db'
 
 def setup_db():
     conn = sqlite3.connect(DB)

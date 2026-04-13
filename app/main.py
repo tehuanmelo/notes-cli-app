@@ -1,8 +1,8 @@
 from textual.app import App
 from textual.widgets import Label, TextArea, Input, ListView, ListItem, Static
 from textual.containers import Horizontal, Vertical
-from database import setup_db, create_note, get_all_notes, delete_note, update_note
-from model import Note
+from data.database import setup_db, create_note, get_all_notes, delete_note, update_note
+from models.model import Note
 from textual.binding import Binding
 from datetime import datetime
 
@@ -10,7 +10,6 @@ class NotesApp(App):
     def __init__(self):
         super().__init__()
         self.current_note = None
-        
 
     CSS_PATH = "notes.css"
     BINDINGS = [
@@ -21,7 +20,6 @@ class NotesApp(App):
         Binding("ctrl+e", "quit", "Quit", priority=True),
     ]
 
-
     def _select_note(self, index: int) -> None:
         self.notes_list.index = index
         self.notes_list.focus()
@@ -29,7 +27,7 @@ class NotesApp(App):
 
     def on_mount(self):
         setup_db()
-        self.note_content_area = self.query_one("#text-area")
+        self.note_content_area = self.query_one("#text-area").focus()
         self.notes_list = self.query_one("#notes-list")
         self.search_input = self.query_one("#search")
         self.header_dates = self.query_one("#header-dates")
@@ -47,7 +45,7 @@ class NotesApp(App):
                 yield Input(placeholder="Search...", id="search", classes="box")
                 yield ListView(id="notes-list", classes="box")
             with Vertical(id="main-app"):
-                yield TextArea.code_editor(placeholder="Enter the note content...", id="text-area", classes="box", language="markdown", theme="monokai")
+                yield TextArea(placeholder="Enter the note content...", id="text-area", classes="box", theme="monokai")
         yield Static("[orange]^s[/orange] Save the current note   [orange]^n[/orange] Create new note   [orange]^d[/orange] Delete current note   [orange]^e[/orange] Exit the app" , id="keybar")
  
  
