@@ -21,6 +21,8 @@ class NotesApp(App):
         Binding("ctrl+e", "quit", "Quit", priority=True),
     ]
     
+
+    
     def _select_note(self, index: int) -> None:
         self.notes_list.index = index
         self.notes_list.focus()
@@ -42,11 +44,11 @@ class NotesApp(App):
                 yield ListView(id="notes-list", classes="box")
             with Vertical(id="main-app"):
                 yield Input(placeholder="Enter the note title...", id="note-title", classes="box")
-                yield TextArea(placeholder="Enter the note content...", id="text-area", classes="box")
+                yield TextArea.code_editor(placeholder="Enter the note content...", id="text-area", classes="box", language="markdown", theme="monokai")
         yield Static("[orange]^s[/orange] Save the current note   [orange]^n[/orange] Create new note   [orange]^d[/orange] Delete current note   [orange]^e[/orange] Exit the app" , id="keybar")
  
     def append_item_to_notes_list(self, note: Note):
-        note_date = datetime.fromisoformat(note.updated_at).strftime("%d %B, %Y")
+        note_date = datetime.fromisoformat(note.updated_at).strftime("%d-%m-%Y")
         item = ListItem(
             Horizontal(
                 Label(note.title, expand=True, classes="note-title"),
@@ -81,6 +83,7 @@ class NotesApp(App):
         if self.current_note is not None:
             delete_note(self.current_note.note_id)
             # set the current note to None
+            self.notify(f"{self.current_note.title} deleted.", severity="error")
             self.current_note = None
         # update the notes_list
         self.update_notes_list()
@@ -94,11 +97,12 @@ class NotesApp(App):
         if self.current_note is None:
             note = create_note(self.note_title_input.value, self.note_content_area.text)
             self.current_note = note
+            self.notify(f"{self.note_title_input.value} saved")
         else:
             update_note(self.note_title_input.value, self.note_content_area.text, self.current_note.note_id)
+            self.notify(f"{self.note_title_input.value} updated", severity="warning")
         self.search_input.value = ""
         self.update_notes_list()
-        self.notify(f"Note saved")
 
 
     def on_list_view_selected(self, event: ListView.Selected):
