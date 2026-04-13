@@ -22,7 +22,6 @@ class NotesApp(App):
     ]
     
 
-    
     def _select_note(self, index: int) -> None:
         self.notes_list.index = index
         self.notes_list.focus()
@@ -33,11 +32,14 @@ class NotesApp(App):
         self.note_content_area = self.query_one("#text-area")
         self.notes_list = self.query_one("#notes-list")
         self.search_input = self.query_one("#search")
+        self.header_dates = self.query_one("#header-dates")
 
         self.update_notes_list()
 
     def compose(self):
-        yield Static("Notes App", id="header")
+        with Horizontal(id="header"):
+            yield Label("Notes App", id="header-title")
+            yield Label("", id="header-dates")
         with Horizontal():
             with Vertical(id="sidebar"):
                 yield Input(placeholder="Search...", id="search", classes="box")
@@ -47,18 +49,20 @@ class NotesApp(App):
                 yield TextArea.code_editor(placeholder="Enter the note content...", id="text-area", classes="box", language="markdown", theme="monokai")
         yield Static("[orange]^s[/orange] Save the current note   [orange]^n[/orange] Create new note   [orange]^d[/orange] Delete current note   [orange]^e[/orange] Exit the app" , id="keybar")
  
+ 
     def append_item_to_notes_list(self, note: Note):
         note_date = datetime.fromisoformat(note.updated_at).strftime("%d-%m-%Y")
         item = ListItem(
             Horizontal(
-                Label(note.title, expand=True, classes="note-title"),
+                Label(note.title, classes="note-title"),
                 Label(note_date, classes="note-date"),
                 classes="list-item"
             )
         )
         item.note = note
         self.notes_list.append(item)
-    
+
+
     def update_notes_list(self):
         self.notes_list.clear()
         selected_note = None
@@ -104,11 +108,24 @@ class NotesApp(App):
         self.search_input.value = ""
         self.update_notes_list()
 
+    def update_header(self):
+        if self.current_note is not None:
+            str_format = "%d %B, %Y %H:%M"
+            date_created = datetime.fromisoformat(self.current_note.created_at).strftime(str_format)
+            date_updated = datetime.fromisoformat(self.current_note.updated_at).strftime(str_format)
+            if date_created == date_updated:
+                self.header_dates.update(f"[orange]Date created:[/orange] {date_created}")
+            else:
+                self.header_dates.update(f"[orange]Date created:[/orange] {date_created} [orange]Last update:[/orange] {date_updated}")
+        else:
+            self.header_dates.update("")
+            
 
     def on_list_view_selected(self, event: ListView.Selected):
         self.current_note = event.item.note
         self.note_title_input.value = self.current_note.title
         self.note_content_area.text = self.current_note.content
+        self.update_header()
 
 
     def on_list_view_highlighted(self, event: ListView.Highlighted):
@@ -117,6 +134,7 @@ class NotesApp(App):
         self.current_note = event.item.note
         self.note_title_input.value = self.current_note.title
         self.note_content_area.text = self.current_note.content
+        self.update_header()
 
 
     def on_input_changed(self, event: Input.Changed):

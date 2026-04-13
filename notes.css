@@ -13,7 +13,19 @@
 }
 
 #header {
-    text-align: center;
+    height: 1;
+    width: 100%;
+    padding-right: 1;
+    padding-left: 2;
+}
+
+#header-title {
+    width: auto;
+    width: 1fr;
+}
+
+#header-dates {
+    width: auto;
 }
 
 .box {
@@ -31,11 +43,12 @@
 }
 
 .note-date {
-    width: 40%;
+    width: auto;
     text-align: right;
     color: gray;
 }
 
 .note-title {
-    width: 60%;
+    width: 1fr;
+    padding-right: 1;
 }
