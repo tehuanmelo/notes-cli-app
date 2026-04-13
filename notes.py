@@ -11,7 +11,7 @@ class NotesApp(App):
         super().__init__()
         self.current_note = None
         
-    
+
     CSS_PATH = "notes.css"
     BINDINGS = [
         Binding("ctrl+s", "save_note", "Save the current note", priority=True),
@@ -20,21 +20,23 @@ class NotesApp(App):
         Binding("ctrl+q", "do_nothing", "Disabled", priority=True),
         Binding("ctrl+e", "quit", "Quit", priority=True),
     ]
-    
+
 
     def _select_note(self, index: int) -> None:
         self.notes_list.index = index
         self.notes_list.focus()
 
+
     def on_mount(self):
         setup_db()
-        self.note_title_input = self.query_one("#note-title").focus()
         self.note_content_area = self.query_one("#text-area")
         self.notes_list = self.query_one("#notes-list")
         self.search_input = self.query_one("#search")
         self.header_dates = self.query_one("#header-dates")
 
         self.update_notes_list()
+        self.header_dates.update("[orange]New Note[/orange]")
+
 
     def compose(self):
         with Horizontal(id="header"):
@@ -45,7 +47,6 @@ class NotesApp(App):
                 yield Input(placeholder="Search...", id="search", classes="box")
                 yield ListView(id="notes-list", classes="box")
             with Vertical(id="main-app"):
-                yield Input(placeholder="Enter the note title...", id="note-title", classes="box")
                 yield TextArea.code_editor(placeholder="Enter the note content...", id="text-area", classes="box", language="markdown", theme="monokai")
         yield Static("[orange]^s[/orange] Save the current note   [orange]^n[/orange] Create new note   [orange]^d[/orange] Delete current note   [orange]^e[/orange] Exit the app" , id="keybar")
  
@@ -76,9 +77,8 @@ class NotesApp(App):
 
     def action_new_note(self):
         self.current_note = None
-        self.note_title_input.focus()
-        self.note_content_area
-        self.note_title_input.value = ""
+        self.note_content_area.focus()
+        self.header_dates.update("[orange]New Note[/orange]")
         self.note_content_area.text = ""
 
  
@@ -93,20 +93,28 @@ class NotesApp(App):
         self.update_notes_list()
         self.action_new_note()
         self.search_input.focus()
+        
+    
+    def get_note_title(self):
+        first_line = self.note_content_area.text.strip().split("\n")[0].split()
+        if len(first_line) > 3:
+            title = " ".join(first_line[:3]) + "..."
+        else:
+            title = " ".join(first_line)
+        return title or "New Note"
 
 
     def action_save_note(self):
-        if not self.note_title_input.value:
-            return
+        title = self.get_note_title()
         if self.current_note is None:
-            note = create_note(self.note_title_input.value, self.note_content_area.text)
+            note = create_note(title, self.note_content_area.text)
             self.current_note = note
-            self.notify(f"{self.note_title_input.value} saved")
+            self.notify(f"{title} saved")
         else:
-            update_note(self.note_title_input.value, self.note_content_area.text, self.current_note.note_id)
-            self.notify(f"{self.note_title_input.value} updated", severity="warning")
-        self.search_input.value = ""
+            update_note(title, self.note_content_area.text, self.current_note.note_id)
+            self.notify(f"{title} updated", severity="warning")
         self.update_notes_list()
+
 
     def update_header(self):
         if self.current_note is not None:
@@ -123,7 +131,6 @@ class NotesApp(App):
 
     def on_list_view_selected(self, event: ListView.Selected):
         self.current_note = event.item.note
-        self.note_title_input.value = self.current_note.title
         self.note_content_area.text = self.current_note.content
         self.update_header()
 
@@ -132,7 +139,6 @@ class NotesApp(App):
         if event.item is None:
             return
         self.current_note = event.item.note
-        self.note_title_input.value = self.current_note.title
         self.note_content_area.text = self.current_note.content
         self.update_header()
 
@@ -142,7 +148,8 @@ class NotesApp(App):
             self.notes_list.clear()
             for note in get_all_notes():
                 if self.search_input.value:
-                    if self.search_input.value.lower() in note.title.lower():
+                    if self.search_input.value.lower() in note.title.lower() or \
+                    self.search_input.value.lower() in note.content.lower():
                         self.append_item_to_notes_list(note)
                 else:
                     self.append_item_to_notes_list(note)
