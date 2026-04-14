@@ -1,5 +1,5 @@
 import sqlite3
-from models.model import Note
+from src.models.model import Note
 from datetime import datetime
 from pathlib import Path
 

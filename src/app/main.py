@@ -1,8 +1,8 @@
 from textual.app import App
 from textual.widgets import Label, TextArea, Input, ListView, ListItem, Static
 from textual.containers import Horizontal, Vertical
-from data.database import setup_db, create_note, get_all_notes, delete_note, update_note
-from models.model import Note
+from src.data.database import setup_db, create_note, get_all_notes, delete_note, update_note
+from src.models.model import Note
 from textual.binding import Binding
 from datetime import datetime
 
@@ -152,7 +152,9 @@ class NotesApp(App):
                 else:
                     self.append_item_to_notes_list(note)
 
-
-if __name__ == "__main__":
+def main():
     app = NotesApp()
     app.run()
+    
+if __name__ == "__main__":
+    main()
