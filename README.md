@@ -1,65 +1,76 @@
-# Notes CLI App
+# 📝 Notes CLI App
 
-## Description
+## 📌 Description
 
 This is a simple terminal-based notes application built with Python and Textual.
 
-The main idea behind this project was to create a personal tool to quickly write notes during my learning process while coding. Instead of switching between apps, I wanted everything available directly in the terminal.
+The main idea behind this project is to provide a personal tool for quickly writing notes during the learning process while coding. Instead of switching between applications, everything is available directly in the terminal.
 
-It also helps improve how I search and revisit my learnings, making the learning process faster and more efficient — all at my fingertips in the terminal.
-
----
-
-## Features
-
-    - Create notes quickly while coding  
-    - Edit and update existing notes  
-    - Delete notes  
-    - Search notes by title or content  
-    - Automatic title generation from content  
-    - Notes sorted by last update  
-    - Clean terminal UI using Textual  
+It also improves how I search and revisit my learnings, making the process faster and more efficient — all at my fingertips in the terminal.
 
 ---
 
-## Tech Stack
+## 🚀 Features
 
-    - Python 3  
-    - SQLite (local database)  
-    - Textual (terminal UI framework)  
+- Create notes quickly while coding
+- Edit and update existing notes
+- Delete notes
+- Search notes by title or content
+- Automatic title generation from content
+- Notes sorted by last update
+- Clean terminal UI using Textual
 
 ---
 
-## Installation
+## 🧰 Tech Stack
 
-### Option 1 — Using install script (recommended)
+- Python 3
+- SQLite (local database)
+- Textual (terminal UI framework)
+
+---
+
+## ⚙️ Installation
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/tehuanmelo/notes-cli-app
+cd notes-cli-app
+```
+
+---
+
+### Option 1 — Automated setup (recommended)
 
 ```bash
 chmod +x install.sh
 ./install.sh
 ```
 
-### Option 2 — Manual setup
-
-Clone the repository
-
-```bash
-git clone http://gthub.com/tehuanmelo/notes-cli-app
-cd notes-cli-app
-```
-Create virtual environment
-
-```bash
-python3 -m venv .venv
-```
-
-Activate it
+Activate the environment:
 
 ```bash
 source .venv/bin/activate
 ```
 
-Install dependencies
+---
+
+### Option 2 — Manual setup
+
+Create a virtual environment:
+
+```bash
+python3 -m venv .venv
+```
+
+Activate it:
+
+```bash
+source .venv/bin/activate
+```
+
+Install dependencies:
 
 ```bash
 pip install -r requirements.txt
@@ -67,7 +78,7 @@ pip install -r requirements.txt
 
 ---
 
-## Usage
+## ▶️ Usage
 
 ### Run the application
 
@@ -77,16 +88,43 @@ python -m src.app.main
 
 ---
 
-## Controls
-    •	Ctrl + s → Save note
-    •	Ctrl + n → New note
-    •	Ctrl + d → Delete note
-    •	Ctrl + e → Exit
-    •	Search bar → Filter notes instantly
+### Run the app using a terminal command (alias)
+
+Add this line to your `.zshrc` file:
+
+```bash
+alias notes="PYTHONPATH=<full_path_to_project> <full_path_to_project>/.venv/bin/python -m src.app.main"
+```
+
+This exposes the project to `PYTHONPATH` and uses the virtual environment Python interpreter where all dependencies are installed.
+
+Reload your shell:
+
+```bash
+source ~/.zshrc
+```
+
+Run the app:
+
+```bash
+notes
+```
+
+You do not need to activate the virtual environment manually because the alias uses the virtual environment Python interpreter.
 
 ---
 
-## Project Structure
+## ⌨️ Controls
+
+- Ctrl + S → Save note
+- Ctrl + N → New note
+- Ctrl + D → Delete note
+- Ctrl + E → Exit
+- Search bar → Filter notes instantly
+
+---
+
+## 📁 Project Structure
 
 ```bash
 notes-cli-app/
@@ -105,64 +143,68 @@ notes-cli-app/
     └── models
         └── model.py       # Note data model
 ```
----
-
-## How It Works
-	•	Notes are stored in a local SQLite database (notes.db)
-	•	Each note contains:
-	    -	title
-	    -	content
-	    -	created_at
-	    -	updated_at
-	    -	id
-
-	•	The UI is built with Textual using:
-	    -	Sidebar (notes list + search)
-	    -	Main area (text editor)
-
-	•	Notes are automatically sorted by most recently updated
 
 ---
 
-## Search
+## 🧠 How It Works
 
-### You can type in the search bar to filter notes by:
-	•	Title
-	•	Content
+- Notes are stored in a local SQLite database (`notes.db`)
+- Each note contains:
+  - title
+  - content
+  - created_at
+  - updated_at
+  - id
+- The UI is built with Textual using:
+  - Sidebar (notes list + search)
+  - Main area (text editor)
+- Notes are automatically sorted by the most recently updated
+
+---
+
+## 🔍 Search
+
+You can type in the search bar to filter notes by:
+
+- Title
+- Content
 
 Filtering happens instantly as you type.
 
 ---
 
-## Notes
-	•	The database is created automatically on first run
-	•	Notes are stored locally on your machine
-	•	No internet connection is required
+## ⚠️ Notes
+
+- The database is created automatically on first run
+- Notes are stored locally on your machine
+- No internet connection is required
 
 ---
 
-## Purpose of the Project
+## 🎯 Purpose of the Project
 
-### This project was created to solve a real problem during my learning journey:
-	•	Capture ideas quickly while coding
-	•	Avoid context switching between apps
-	•	Keep all learning notes in one place
-	•	Improve the ability to search and revisit knowledge
+This project was created to solve a real problem during my learning journey:
 
-### The goal is to make learning faster and more practical by keeping everything inside the terminal.
+- Capture ideas quickly while coding
+- Avoid context switching between applications
+- Keep all learning notes in one place
+- Improve the ability to search and revisit knowledge
 
----
-
-## Future Improvements
-	•	Add tags or categories
-	•	Add better search (filters, keywords)
-	•	Export notes (JSON / CSV)
-	•	Improve UI/UX
-	•	Add keyboard navigation enhancements
+The goal is to make learning faster and more practical by keeping everything inside the terminal.
 
 ---
 
-## Author
+## 🔮 Future Improvements
+
+- Add tags or categories
+- Improve search (filters, keywords)
+- Export notes (JSON / CSV)
+- Improve UI/UX
+- Add keyboard navigation enhancements
+
+---
+
+## 👨‍💻 Author
 
 - Tehuan Melo
 - Python Developer | Jiu-Jitsu Coach
