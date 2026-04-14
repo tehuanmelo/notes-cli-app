@@ -8,6 +8,11 @@ The main idea behind this project is to provide a personal tool for quickly writ
 
 It also improves how I search and revisit my learnings, making the process faster and more efficient — all at my fingertips in the terminal.
 
+## 🎥 Demo
+
+### Quick Preview (GIF)
+![Demo](images/demo.gif)
+
 ---
 
 ## 🚀 Features
