@@ -4,14 +4,14 @@
 
 This is a simple terminal-based notes application built with Python and Textual.
 
-The main idea behind this project is to provide a personal tool for quickly writing notes during the learning process while coding. Instead of switching between applications, everything is available directly in the terminal.
+The main idea behind this project is to provide a personal tool for quickly writing notes while coding and learning. Instead of switching between applications, everything is available directly in the terminal.
 
-It also improves how I search and revisit my learnings, making the process faster and more efficient — all at my fingertips in the terminal.
+It also improves how I search and revisit my notes, making the process faster and more efficient — all at my fingertips in the terminal.
 
 ## 🎥 Demo
 
 ### Quick Preview (GIF)
-![Demo](images/demo.gif)
+![Demo](./images/demo.gif)
 
 ---
 
@@ -95,13 +95,21 @@ python -m src.app.main
 
 ### Run the app using a terminal command (alias)
 
+#### Option 1 — Automated script
+
+Run the alias script:
+
+```bash
+python alias_script.py
+```
+
+#### Option 2 — Manual setup
+
 Add this line to your `.zshrc` file:
 
 ```bash
 alias notes="PYTHONPATH=<full_path_to_project> <full_path_to_project>/.venv/bin/python -m src.app.main"
 ```
-
-This exposes the project to `PYTHONPATH` and uses the virtual environment Python interpreter where all dependencies are installed.
 
 Reload your shell:
 
@@ -115,16 +123,16 @@ Run the app:
 notes
 ```
 
-You do not need to activate the virtual environment manually because the alias uses the virtual environment Python interpreter.
+You do not need to activate the virtual environment manually because the alias uses the virtual environment’s Python interpreter.
 
 ---
 
 ## ⌨️ Controls
 
 - Ctrl + S → Save note
-- Ctrl + N → New note
+- Ctrl + N → Create a new note
 - Ctrl + D → Delete note
-- Ctrl + E → Exit
+- Ctrl + E → Exit the application
 - Search bar → Filter notes instantly
 
 ---
@@ -180,7 +188,7 @@ Filtering happens instantly as you type.
 
 ## ⚠️ Notes
 
-- The database is created automatically on first run
+- The database is created automatically on the first run
 - Notes are stored locally on your machine
 - No internet connection is required
 
@@ -211,7 +219,7 @@ The goal is to make learning faster and more practical by keeping everything ins
 
 ## 👨‍💻 Author
 
-- Tehuan Melo
+- Tehuan Melo  
 - Python Developer | Jiu-Jitsu Coach
 
 ---
