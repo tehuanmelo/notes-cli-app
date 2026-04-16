@@ -2,10 +2,19 @@ import sqlite3
 from src.models.model import Note
 from datetime import datetime
 from pathlib import Path
+import shutil
+from datetime import datetime
 
-DB = Path(__file__).resolve().parent / 'notes.db'
+CURRENT_PATH = Path(__file__).resolve().parent
+DB = CURRENT_PATH / "notes.db"
 
 def setup_db():
+    if DB.exists():
+        for file in CURRENT_PATH.glob("notes_*"):
+            file.unlink(missing_ok=True)
+        now = datetime.now()
+        db_backup = CURRENT_PATH / f"notes_db_{now.strftime("%Y_%m_%d_%H_%M.db")}"
+        shutil.copy2(DB, db_backup)
     conn = sqlite3.connect(DB)
     c = conn.cursor()
     with conn:

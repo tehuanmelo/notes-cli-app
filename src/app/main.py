@@ -45,7 +45,7 @@ class NotesApp(App):
                 yield Input(placeholder="Search...", id="search", classes="box")
                 yield ListView(id="notes-list", classes="box")
             with Vertical(id="main-app"):
-                yield TextArea(placeholder="Enter the note content...", id="text-area", classes="box", theme="monokai")
+                yield TextArea(placeholder="Enter the note content...", id="text-area", classes="box", language="python")
         yield Static("[orange]^s[/orange] Save the current note   [orange]^n[/orange] Create new note   [orange]^d[/orange] Delete current note   [orange]^e[/orange] Exit the app" , id="keybar")
  
  
